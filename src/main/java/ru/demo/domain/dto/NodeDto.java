@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class NodeDTO {
+public class NodeDto {
     @NotNull(message = "id must not be null")
     @Min(1)
     private Long id;

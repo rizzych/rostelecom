@@ -2,10 +2,7 @@ package ru.demo.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.demo.domain.dto.ClusterCreateDto;
-import ru.demo.domain.dto.ClusterResponseDto;
-import ru.demo.domain.dto.ClusterUpdateDto;
-import ru.demo.domain.dto.NodeDTO;
+import ru.demo.domain.dto.*;
 import ru.demo.services.CrudService;
 
 import javax.validation.Valid;
@@ -40,10 +37,10 @@ public class CrudController {
         crudService.delete(id);
     }
 
-    @RequestMapping(value = "/addNodes", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/addNode", method = RequestMethod.PUT)
     @ResponseStatus(value = HttpStatus.OK)
-    public void addNodes(@RequestParam Long id, @RequestBody List<NodeDTO> nodeDTO) {
-        crudService.addNodes(id, nodeDTO);
+    public void addNode(@RequestParam Long id, @RequestBody NodeCreateDto nodeCreateDto) {
+        crudService.addNode(id, nodeCreateDto);
     }
 
     @RequestMapping(value = "/clusters", method = RequestMethod.GET)
@@ -54,7 +51,7 @@ public class CrudController {
 
     @RequestMapping(value = "/nodes", method = RequestMethod.GET)
     @ResponseStatus(value = HttpStatus.OK)
-    public List<NodeDTO> getNodesById(@RequestParam Long id) {
+    public List<NodeDto> getNodesById(@RequestParam Long id) {
         return crudService.getNodes(id);
     }
 }

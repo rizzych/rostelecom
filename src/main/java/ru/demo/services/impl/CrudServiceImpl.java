@@ -1,18 +1,16 @@
 package ru.demo.services.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
-import ru.demo.domain.dto.ClusterCreateDto;
-import ru.demo.domain.dto.ClusterResponseDto;
-import ru.demo.domain.dto.ClusterUpdateDto;
-import ru.demo.domain.dto.NodeDTO;
+import ru.demo.domain.dto.*;
 import ru.demo.domain.entity.Cluster;
 import ru.demo.domain.entity.Node;
 import ru.demo.repository.ClustersJpaRepository;
 import ru.demo.repository.NodeJpaRepository;
 import ru.demo.services.CrudService;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -21,6 +19,7 @@ import java.util.stream.Collectors;
 @Service
 public class CrudServiceImpl implements CrudService {
 
+    private Logger logger = LoggerFactory.getLogger(CrudServiceImpl.class);
     private final ClustersJpaRepository clustersJpaRepository;
     private final NodeJpaRepository nodeJpaRepository;
 
@@ -32,11 +31,10 @@ public class CrudServiceImpl implements CrudService {
     @Override
     @Validated
     public void create(ClusterCreateDto cluster) {
-
         Cluster dbCluster = new Cluster();
         dbCluster.setDescription(cluster.getDescription());
-        if (!cluster.getNode().isEmpty()) {
-            List<Node> nodeList = cluster.getNode().stream().map(x -> Node.builder()
+        if (!cluster.getNodes().isEmpty()) {
+            List<Node> nodeList = cluster.getNodes().stream().map(x -> Node.builder()
                     .name(x.getName())
                     .cluster(dbCluster)
                     .build()
@@ -72,21 +70,16 @@ public class CrudServiceImpl implements CrudService {
         clustersJpaRepository.deleteById(id);
     }
 
-    //TODO serialize string (json parse) or put here ClusterDto
     @Override
-    public void addNodes(Long id, List<NodeDTO> nodeDTO) {
+    public void addNode(Long id, NodeCreateDto nodeCreateDto) {
         Optional<Cluster> clusterByIdOptional = clustersJpaRepository.findById(id);
         if (clusterByIdOptional.isPresent()) {
             Cluster cluster = clusterByIdOptional.get();
             if (cluster.getNodes().isEmpty()) {
-                List<Node> nodes = new ArrayList<>();
-                nodeDTO.forEach(x -> nodes.add(Node.builder()
-                        .id(x.getId())
-                        .name(x.getName())
-                        .cluster(cluster)
-                        .build()
-                ));
-                nodeJpaRepository.saveAll(nodes);
+                Node node = new Node();
+                node.setName(nodeCreateDto.getName());
+                node.setCluster(cluster);
+                nodeJpaRepository.save(node);
             } else {
                 throw new RuntimeException(id + "- у этого id есть nodes");
             }
@@ -108,12 +101,12 @@ public class CrudServiceImpl implements CrudService {
     }
 
     @Override
-    public List<NodeDTO> getNodes(Long id) {
+    public List<NodeDto> getNodes(Long id) {
         Optional<Cluster> clustersById = clustersJpaRepository.findById(id);
         if (clustersById.isPresent()) {
             List<Node> node = clustersById.get().getNodes();
             if (!node.isEmpty()) {
-                return node.stream().map(x -> NodeDTO.builder()
+                return node.stream().map(x -> NodeDto.builder()
                         .id(x.getId())
                         .name(x.getName())
                         .build()

@@ -18,6 +18,6 @@ public class ClusterCreateDto {
     @NotBlank(message = "description must not be blank")
     private String description;
 
-    private List<NodeDTO> node = new ArrayList<>();
+    private List<NodeDto> nodes = new ArrayList<>();
 
 }

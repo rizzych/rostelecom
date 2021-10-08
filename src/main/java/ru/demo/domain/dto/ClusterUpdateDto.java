@@ -25,5 +25,5 @@ public class ClusterUpdateDto {
     @NotBlank(message = "description must not be blank")
     private String description;
 
-    private List<NodeDTO> nodes = new ArrayList<>();
+    private List<NodeDto> nodes = new ArrayList<>();
 }
