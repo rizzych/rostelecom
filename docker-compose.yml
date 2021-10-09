@@ -1,26 +1,26 @@
 version: '3.1'
 
 services:
-    app:
-      container_name: application
-      image: springboot
-      volumes:
+  postgresql:
+    image: postgres
+    container_name: postgresql
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: rostelecom
+    ports:
+      - 5432:5432
+    restart: always
+  app:
+    container_name: application
+    image: springboot
+    build: .
+    volumes:
       - /log
-      build: ./
-      environment:
-        SPRING_DATASOURCE_URL: jdbc:postgresql://postgresql:5432/rostelecom
-      ports:
-        - 8080:8080
-      depends_on:
-        - postgresql
-      restart: always
-    postgresql:
-      image: postgres
-      container_name: postgresql
-      environment:
-        - POSTGRES_PASSWORD=postgres
-        - POSTGRES_USER=postgres
-        - POSTGRES_DB=rostelecom
-      ports:
-        - 5432:5432
-      restart: always
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgresql:5432/rostelecom
+    ports:
+      - 8080:8080
+    depends_on:
+      - postgresql
+    restart: always
