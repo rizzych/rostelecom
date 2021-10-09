@@ -75,14 +75,10 @@ public class CrudServiceImpl implements CrudService {
         Optional<Cluster> clusterByIdOptional = clustersJpaRepository.findById(id);
         if (clusterByIdOptional.isPresent()) {
             Cluster cluster = clusterByIdOptional.get();
-            if (cluster.getNodes().isEmpty()) {
-                Node node = new Node();
-                node.setName(nodeCreateDto.getName());
-                node.setCluster(cluster);
-                nodeJpaRepository.save(node);
-            } else {
-                throw new RuntimeException(id + "- у этого id есть nodes");
-            }
+            Node node = new Node();
+            node.setName(nodeCreateDto.getName());
+            node.setCluster(cluster);
+            nodeJpaRepository.save(node);
         }
     }
 
