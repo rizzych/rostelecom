@@ -5,7 +5,7 @@ FROM maven:3.8.1-amazoncorretto-8
 COPY ./ ./
 
 # package our application code
-RUN mvn clean package
+RUN mvn clean package -DskipTests
 
 COPY src/main/resources/application.properties /application.properties
 
